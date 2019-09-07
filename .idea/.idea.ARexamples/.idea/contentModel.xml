@@ -66,6 +66,9 @@
           </e>
         </e>
         <e p="GoogleARCore" t="Include">
+          <e p="Editor" t="Include">
+            <e p="ARCoreiOSDependencies.template" t="Include" />
+          </e>
           <e p="Examples" t="Include">
             <e p="AugmentedFaces" t="Include">
               <e p="Materials" t="Include">
