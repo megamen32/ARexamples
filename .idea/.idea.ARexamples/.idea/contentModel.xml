@@ -457,6 +457,7 @@
             <e p="MultiSceneDemo" t="Include">
               <e p="Scripts" t="Include">
                 <e p="LoadSceneWithDelay.cs" t="Include" />
+                <e p="SceneSwitcher.cs" t="Include" />
               </e>
             </e>
             <e p="NetworkDemo" t="Include">

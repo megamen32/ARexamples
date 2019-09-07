@@ -58,25 +58,18 @@ public class PlayerController : NetworkBehaviour // MonoBehaviour
             {
                 if (action == MultiARInterop.InputAction.Click)
                 {
-                  
-                  CmdFire();
-                  countDown = FireRate;
-
+                    CmdFire();
+                    countDown = FireRate;
                 } else if (action == MultiARInterop.InputAction.Grip)
                 {
-                    oneClick = !oneClick;
-                    if (oneClick)
-                    {
-                        CmdSpawnStar(bulletSpawn.position, Quaternion.LookRotation(bulletSpawn.forward, Vector3.up));
-                    } else
-                    {
+                    
                         Portal();
-                    }
+                        CmdSpawnStar(bulletSpawn.position, Quaternion.LookRotation(bulletSpawn.forward, Vector3.up));
+                   
 
                     countDown = FireRate;
-                } 
-                   
-            } 
+                }
+            }
         }
     }
 
@@ -84,24 +77,30 @@ public class PlayerController : NetworkBehaviour // MonoBehaviour
     {
         if (arManager != null && arManager.RaycastToWorld(true, out var hit))
         {
-            CmdPortal(hit);
+            CmdPortal( hit.point, hit.rotation);
         }
     }
 
     [Command]
-    void CmdPortal(MultiARInterop.TrackableHit hit)
+    void CmdPortal( Vector3 transformPosition, Quaternion rotation)
     {
-        if (portalObj == null) {portalObj = Instantiate(portalPrefab);
-        NetworkServer.Spawn(portalObj);
-        Destroy(portalObj, 3);
-    }
+        if (portalObj != null)
+        {
+            Destroy(portalObj, 5);
+            portalObj = null;
+        }
 
-        portalObj.transform.position = hit.point;
-        portalObj.transform.rotation = Quaternion.LookRotation(bulletSpawn.forward,hit.normal);
+        if (portalObj == null)
+        {
+            portalObj = Instantiate(portalPrefab);
+            NetworkServer.Spawn(portalObj);
+           
+        }
+
+        portalObj.transform.position = transformPosition;
+        portalObj.transform.rotation = rotation;
         //portalObj.transform.localScale *= ( 10/ hit.distance);
         //if (turnPortal) MultiARInterop.TurnObjectToCamera(portalObj, arMainCamera, hit.point, hit.normal);
-
-
     }
 
     GameObject prevShield;

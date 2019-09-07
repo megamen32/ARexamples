@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
 
@@ -7,7 +8,25 @@ public class BulletScript : MonoBehaviour
 {
 
 	public GameObject playerOwner;
+	Vector3 startSize;
+	public float MaxDistToTravel;
 
+	
+
+	void Start()
+	{
+		startSize = transform.localScale;
+		
+	}
+
+	void Update()
+	{
+		if (playerOwner != null)
+		{
+			transform.localScale = Vector3.Lerp(Vector3.one * 1f / 5f, startSize + startSize.z * Vector3.forward,
+				Vector3.Distance(playerOwner.transform.position, transform.position) / MaxDistToTravel );
+		}
+	}
 
 	void OnCollisionEnter(Collision collision)
 	{

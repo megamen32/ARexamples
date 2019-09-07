@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 using System.Net;
+using UnityEngine.SceneManagement;
 
 public class ArServerController : MonoBehaviour 
 {
@@ -86,6 +87,7 @@ public class ArServerController : MonoBehaviour
 
 	void Start () 
 	{
+		
 		try 
 		{
 			// setup network manager component
@@ -166,6 +168,8 @@ public class ArServerController : MonoBehaviour
 				serverStatusText.text = ex.Message;
 			}
 		}
+
+		//SceneManager.LoadSceneAsync("ArClientCloudAnchorDemo", LoadSceneMode.Single);
 	}
 
 
