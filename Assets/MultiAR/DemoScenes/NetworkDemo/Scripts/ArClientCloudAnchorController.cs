@@ -19,6 +19,7 @@ public class ArClientCloudAnchorController : ArClientBaseController
 
 	// shared game anchor mark (the cube)
 	private GameObject gameAnchorGo = null;
+	[SerializeField] GameObject AnchorPrefab;
 
 
 	protected override void Update () 
@@ -55,7 +56,7 @@ public class ArClientCloudAnchorController : ArClientBaseController
 
 					marManager.AnchorGameObjectToWorld(worldAnchorObj, hit);
 
-					gameAnchorGo = GameObject.CreatePrimitive(PrimitiveType.Cube);
+					gameAnchorGo = Instantiate(AnchorPrefab);
 					gameAnchorGo.name = "GameAnchor";
 
 					Transform gameAnchorTransform = gameAnchorGo.transform;
@@ -149,7 +150,7 @@ public class ArClientCloudAnchorController : ArClientBaseController
 						{
 							LogMessage("World anchor restored: " + worldAnchorId);
 
-							gameAnchorGo = GameObject.CreatePrimitive(PrimitiveType.Cube);
+							gameAnchorGo = Instantiate(AnchorPrefab);
 							gameAnchorGo.name = "GameAnchor-" + worldAnchorId;
 
 							Transform gameAnchorTransform = gameAnchorGo.transform;
@@ -157,7 +158,7 @@ public class ArClientCloudAnchorController : ArClientBaseController
 
 							gameAnchorTransform.localPosition = Vector3.zero;
 							gameAnchorTransform.localRotation = Quaternion.identity;
-							gameAnchorTransform.localScale = new Vector3(0.1f, 0.2f, 0.3f);
+						//	gameAnchorTransform.localScale = new Vector3(0.1f, 0.2f, 0.3f);
 
 							Renderer renderer = gameAnchorGo.GetComponent<Renderer>();
 							if(renderer != null && cloudAnchorMaterial != null)

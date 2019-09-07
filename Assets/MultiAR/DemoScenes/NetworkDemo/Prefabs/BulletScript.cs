@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking;
 
 
 public class BulletScript : MonoBehaviour 
@@ -23,8 +24,9 @@ public class BulletScript : MonoBehaviour
 		{
 			Debug.Log(hitObject.name + " takes damage");
 			health.TakeDamage(10);
-		}
+		} 
 
 		Destroy(gameObject);
+		
 	}
 }

@@ -9,6 +9,62 @@
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
+        <e p="Game" t="Include">
+          <e p="3D Items - Wand Pack" t="Include">
+            <e p="Read Me.txt" t="Include" />
+          </e>
+          <e p="JMO Assets" t="Include">
+            <e p="!JMO Assets Readme.txt" t="Include" />
+            <e p="Cartoon FX" t="Include">
+              <e p="CartoonFX Free.txt" t="Include" />
+              <e p="Demo" t="Include">
+                <e p="Assets" t="Include">
+                  <e p="CFX_AutoStopLoopedEffect.cs" t="Include" />
+                  <e p="CFX_Demo_New.cs" t="Include" />
+                  <e p="CFX_Demo_RandomDir.cs" t="Include" />
+                  <e p="CFX_Demo_RandomDirectionTranslate.cs" t="Include" />
+                  <e p="CFX_Demo_RotateCamera.cs" t="Include" />
+                  <e p="CFX_Demo_Translate.cs" t="Include" />
+                </e>
+              </e>
+              <e p="Scripts" t="Include">
+                <e p="CFX_AutoDestructShuriken.cs" t="Include" />
+                <e p="CFX_AutoRotate.cs" t="Include" />
+                <e p="CFX_LightFlicker.cs" t="Include" />
+                <e p="CFX_LightIntensityFade.cs" t="Include" />
+              </e>
+              <e p="Shaders" t="Include">
+                <e p="CFX3 Multiply Color.shader" t="Include" />
+                <e p="CFXM_MobileParticleAdd_Alpha8.shader" t="Include" />
+              </e>
+            </e>
+            <e p="Cartoon FX Easy Editor" t="Include">
+              <e p="CartoonFX Easy Editor Readme.txt" t="Include" />
+              <e p="Editor" t="Include">
+                <e p="CFXEasyEditor.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="Particle Ribbon by Moonflower Carnivore" t="Include">
+            <e p="readme_Simple_Particle_Ribbon.txt" t="Include" />
+            <e p="Scripts" t="Include">
+              <e p="randomParticleRotation.cs" t="Include" />
+              <e p="ReverseNormals.cs" t="Include" />
+              <e p="rotation.cs" t="Include" />
+            </e>
+            <e p="Shaders" t="Include">
+              <e p="Particle Alpha Blend HDR.shader" t="Include" />
+            </e>
+          </e>
+          <e p="Simple UI" t="Include">
+            <e p="Fonts" t="Include">
+              <e p="OFL.txt" t="Include" />
+            </e>
+            <e p="Samples" t="Include">
+              <e p="IconPreview.cs" t="Include" />
+            </e>
+          </e>
+        </e>
         <e p="GoogleARCore" t="Include">
           <e p="Examples" t="Include">
             <e p="AugmentedFaces" t="Include">
@@ -387,6 +443,7 @@
             </e>
             <e p="ColliderDemo" t="Include">
               <e p="Scripts" t="Include">
+                <e p="AutoDestruct.cs" t="Include" />
                 <e p="CameraShooter.cs" t="Include" />
               </e>
             </e>
@@ -460,6 +517,39 @@
           </e>
         </e>
         <e p="Photon" t="Include">
+          <e p="PhotonChat" t="Include">
+            <e p="Code" t="Include">
+              <e p="ChannelCreationOptions.cs" t="Include" />
+              <e p="ChannelWellKnownProperties.cs" t="Include" />
+              <e p="ChatChannel.cs" t="Include" />
+              <e p="ChatClient.cs" t="Include" />
+              <e p="ChatDisconnectCause.cs" t="Include" />
+              <e p="ChatEventCode.cs" t="Include" />
+              <e p="ChatOperationCode.cs" t="Include" />
+              <e p="ChatParameterCode.cs" t="Include" />
+              <e p="ChatPeer.cs" t="Include" />
+              <e p="ChatState.cs" t="Include" />
+              <e p="ChatUserStatus.cs" t="Include" />
+              <e p="IChatClientListener.cs" t="Include" />
+              <e p="PhotonChat.asmdef" t="Include" />
+            </e>
+            <e p="Demos" t="Include">
+              <e p="Common" t="Include">
+                <e p="EventSystemSpawner.cs" t="Include" />
+                <e p="OnStartDelete.cs" t="Include" />
+                <e p="TextButtonTransition.cs" t="Include" />
+                <e p="TextToggleIsOnTransition.cs" t="Include" />
+              </e>
+              <e p="DemoChat" t="Include">
+                <e p="ChannelSelector.cs" t="Include" />
+                <e p="ChatAppIdCheckerUI.cs" t="Include" />
+                <e p="ChatGui.cs" t="Include" />
+                <e p="FriendItem.cs" t="Include" />
+                <e p="IgnoreUiRaycastWhenInactive.cs" t="Include" />
+                <e p="NamePickGui.cs" t="Include" />
+              </e>
+            </e>
+          </e>
           <e p="PhotonLibs" t="Include">
             <e p="changes-library.txt" t="Include" />
             <e p="Photon3Unity3D.xml" t="Include" />
@@ -985,83 +1075,10 @@
           </e>
           <e p="UnityARKitPluginSettings.cs" t="Include" />
         </e>
-        <e p="Wizard" t="Include">
-          <e p="3D Items - Wand Pack" t="Include">
-            <e p="Read Me.txt" t="Include" />
-          </e>
-          <e p="Game" t="Include">
-            <e p="Scripts" t="Include">
-              <e p="Attack.cs" t="Include" />
-              <e p="Authentication.cs" t="Include" />
-              <e p="GameEvent.cs" t="Include" />
-              <e p="GameEventListener.cs" t="Include" />
-              <e p="Health.cs" t="Include" />
-              <e p="LookAtCamera.cs" t="Include" />
-              <e p="ProjectileSettings.cs" t="Include" />
-              <e p="RuntimeSet.cs" t="Include" />
-              <e p="Shield.cs" t="Include" />
-              <e p="ShootRaycast.cs" t="Include" />
-              <e p="StayUpright.cs" t="Include" />
-              <e p="Team.cs" t="Include" />
-              <e p="TeamRuntimeSet.cs" t="Include" />
-              <e p="UIManager.cs" t="Include" />
-            </e>
-          </e>
-          <e p="JMO Assets" t="Include">
-            <e p="!JMO Assets Readme.txt" t="Include" />
-            <e p="Cartoon FX" t="Include">
-              <e p="CartoonFX Free.txt" t="Include" />
-              <e p="Demo" t="Include">
-                <e p="Assets" t="Include">
-                  <e p="CFX_AutoStopLoopedEffect.cs" t="Include" />
-                  <e p="CFX_Demo_New.cs" t="Include" />
-                  <e p="CFX_Demo_RandomDir.cs" t="Include" />
-                  <e p="CFX_Demo_RandomDirectionTranslate.cs" t="Include" />
-                  <e p="CFX_Demo_RotateCamera.cs" t="Include" />
-                  <e p="CFX_Demo_Translate.cs" t="Include" />
-                </e>
-              </e>
-              <e p="Scripts" t="Include">
-                <e p="CFX_AutoDestructShuriken.cs" t="Include" />
-                <e p="CFX_AutoRotate.cs" t="Include" />
-                <e p="CFX_LightFlicker.cs" t="Include" />
-                <e p="CFX_LightIntensityFade.cs" t="Include" />
-              </e>
-              <e p="Shaders" t="Include">
-                <e p="CFX3 Multiply Color.shader" t="Include" />
-                <e p="CFXM_MobileParticleAdd_Alpha8.shader" t="Include" />
-              </e>
-            </e>
-            <e p="Cartoon FX Easy Editor" t="Include">
-              <e p="CartoonFX Easy Editor Readme.txt" t="Include" />
-              <e p="Editor" t="Include">
-                <e p="CFXEasyEditor.cs" t="Include" />
-              </e>
-            </e>
-          </e>
-          <e p="Particle Ribbon by Moonflower Carnivore" t="Include">
-            <e p="readme_Simple_Particle_Ribbon.txt" t="Include" />
-            <e p="Scripts" t="Include">
-              <e p="randomParticleRotation.cs" t="Include" />
-              <e p="ReverseNormals.cs" t="Include" />
-              <e p="rotation.cs" t="Include" />
-            </e>
-            <e p="Shaders" t="Include">
-              <e p="Particle Alpha Blend HDR.shader" t="Include" />
-            </e>
-          </e>
-          <e p="Simple UI" t="Include">
-            <e p="Fonts" t="Include">
-              <e p="OFL.txt" t="Include" />
-            </e>
-            <e p="Samples" t="Include">
-              <e p="IconPreview.cs" t="Include" />
-            </e>
-          </e>
-        </e>
       </e>
       <e p="obj" t="ExcludeRecursive" />
       <e p="Packages" t="ExcludeRecursive" />
+      <e p="PhotonChat.csproj" t="IncludeRecursive" />
       <e p="PhotonRealtime.csproj" t="IncludeRecursive" />
       <e p="PhotonUnityNetworking.csproj" t="IncludeRecursive" />
       <e p="PhotonUnityNetworking.Demos.csproj" t="IncludeRecursive" />

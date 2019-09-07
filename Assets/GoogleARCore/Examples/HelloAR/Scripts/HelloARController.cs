@@ -126,9 +126,8 @@ namespace GoogleARCore.Examples.HelloAR
                     {
                         prefab = AndyPointPrefab;
                     }
-                    else if (hit.Trackable is DetectedPlane)
+                    else if (hit.Trackable is DetectedPlane detectedPlane)
                     {
-                        DetectedPlane detectedPlane = hit.Trackable as DetectedPlane;
                         if (detectedPlane.PlaneType == DetectedPlaneType.Vertical)
                         {
                             prefab = AndyVerticalPlanePrefab;

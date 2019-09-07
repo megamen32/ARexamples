@@ -258,17 +258,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f109508d1ab0a2f41ab2a75bb78fc2f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameName: ArGame-Server
-  serverHost: 192.168.1.35
+  gameName: ArGame
+  serverHost: 0.0.0.0
   serverPort: 7777
   reconnectAfterSeconds: 2
   playerPrefab: {fileID: 1349481665490388, guid: 75979db9a368a64429fc1c2f660fcd0e,
     type: 3}
   spawnPrefabs:
   - {fileID: 1180623737584186, guid: e580335d513c3fe46914ea1af993d23f, type: 3}
+  - {fileID: 8491731502211440699, guid: 58a66b805d174154cb92a24a6e52692a, type: 3}
+  - {fileID: 1409974299050440, guid: 3fede2199199a734baf74d4f91201888, type: 3}
+  - {fileID: 1930613698465500, guid: 0d7f2ff083e17ee4686b75596aa73f9f, type: 3}
   statusText: {fileID: 1092880655}
   showDebugMessages: 1
-  cloudAnchorMaterial: {fileID: 2100000, guid: 3bda841d1c98a994d9d3af4e138697ce, type: 2}
+  cloudAnchorMaterial: {fileID: 2100000, guid: 0cb4f0cb1433247d08a6a7bd18334cb5, type: 2}
+  AnchorPrefab: {fileID: 1930613698465500, guid: 0d7f2ff083e17ee4686b75596aa73f9f,
+    type: 3}
 --- !u!1 &1092880652
 GameObject:
   m_ObjectHideFlags: 0
@@ -970,6 +975,22 @@ PrefabInstance:
     - target: {fileID: 114962951517112342, guid: cb4d91dd0146cac4395f7dadfdec7aac,
         type: 3}
       propertyPath: useOverlaySurface
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114962951517112342, guid: cb4d91dd0146cac4395f7dadfdec7aac,
+        type: 3}
+      propertyPath: pointCloudPrefab
+      value: 
+      objectReference: {fileID: 1536853937296922, guid: 26558ae1d2e7243728486d789f984c53,
+        type: 3}
+    - target: {fileID: 114962951517112342, guid: cb4d91dd0146cac4395f7dadfdec7aac,
+        type: 3}
+      propertyPath: showCursor
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114962951517112342, guid: cb4d91dd0146cac4395f7dadfdec7aac,
+        type: 3}
+      propertyPath: preferredPlatform
       value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
