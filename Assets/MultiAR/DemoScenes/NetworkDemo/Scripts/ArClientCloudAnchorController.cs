@@ -64,7 +64,7 @@ public class ArClientCloudAnchorController : ArClientBaseController
 
 					gameAnchorTransform.localPosition = Vector3.zero;
 					gameAnchorTransform.localRotation = Quaternion.identity;
-					gameAnchorTransform.localScale = new Vector3(0.1f, 0.2f, 0.3f);
+				//	gameAnchorTransform.localScale = new Vector3(0.1f, 0.2f, 0.3f);
 				}
 			}
 		}

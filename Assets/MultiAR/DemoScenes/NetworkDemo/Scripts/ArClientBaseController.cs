@@ -451,9 +451,7 @@ public class ArClientBaseController : MonoBehaviour
 
 public class SimpleNetworkManager:NetworkManager
 {
-	public class CloudAnchorsNetworkManager : NetworkManager
-#pragma warning restore 618
-	{
+
 		/// <summary>
 		/// Action which get called when the client connects to a server.
 		/// </summary>
@@ -495,5 +493,5 @@ public class SimpleNetworkManager:NetworkManager
 				OnClientDisconnected();
 			}
 		}
-	}
+	
 }

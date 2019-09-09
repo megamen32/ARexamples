@@ -88,8 +88,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4682183042793072}
   - component: {fileID: 114962951517112342}
-  - component: {fileID: 114504722886925034}
   - component: {fileID: 114787928919029918}
+  - component: {fileID: 2008563232}
   m_Layer: 0
   m_Name: MultiARController
   m_TagString: Untagged
@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a9964692d3e5bd489c065dc631df4c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  preferredPlatform: 0
+  preferredPlatform: 2
   applyARLight: 1
   usePointCloudData: 1
   pointCloudPrefab: {fileID: 1707953204718416, guid: 2f471897ca3904978b6ce3a09dae9a0f,
@@ -142,18 +142,6 @@ MonoBehaviour:
   showCursor: 3
   cursorObject: {fileID: 4194544903986052}
   infoText: {fileID: 0}
---- !u!114 &114504722886925034
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1541651302486692}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6eecb626e51fd9845a24defc49dec114, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114787928919029918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,6 +156,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   arCoreDevicePrefab: {fileID: 1772147192650458, guid: c10877f7cd5764de18d46d7b777d1faa,
     type: 3}
+--- !u!114 &2008563232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1541651302486692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcb2d476de6a28d49a689326ecbfc653, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  yuvMaterial: {fileID: 0}
+  cameraAlignment: 0
 --- !u!1 &1629984654954654
 GameObject:
   m_ObjectHideFlags: 0

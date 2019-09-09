@@ -1,47 +1,103 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SceneSwitcher : MonoBehaviour
 {
-    [SerializeField] ArServerController ServerController;
+    [SerializeField] ArServerController            ServerController;
     [SerializeField] ArClientCloudAnchorController ClientController;
 
     public void GotoMainScene()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+    public void StartServer()
+    {
+        if (ClientController != null && ClientController.isActiveAndEnabled)
         {
-            SceneManager.LoadScene((SceneManager.GetActiveScene().buildIndex+1)%SceneManager.sceneCount);
+            DeStopClient();
+            Invoke("StartServer", Time.deltaTime * 3);
+            return;
         }
 
-        public void StartServer()
+
+        if (!ServerController.isActiveAndEnabled)
         {
-          ServerController.gameObject.SetActive(true);
+            ServerController.gameObject.SetActive(true);
+        }
+    }
+
+    public void StopServer()
+    {
+        ServerController.gameObject.SetActive(false);
+    }
+
+    public void ToggleServer()
+    {
+        if (ServerController != null && !  ServerController.isActiveAndEnabled)
+        {
+            DeStopClient();
         }
 
-        public void StopServer()
-        {
-            ServerController.gameObject.SetActive(false);
-        }
+        ServerController.gameObject.SetActive( !  ServerController.gameObject.active);
+    }
 
-        public void ToggleServer()
+    void DeStopClient()
+    {
+        //  SceneManager.LoadSceneAsync(0).allowSceneActivation = true;
+        if (ClientController != null)
         {
-            ServerController.gameObject.SetActive( !  ServerController.gameObject.active);
+            Destroy(ClientController.gameObject);
         }
+    }
 
-        public void StartClient()
+    void DeStopServer()
+    {
+        // SceneManager.LoadSceneAsync(0).allowSceneActivation=true;
+        if (ServerController != null)
         {
-            ClientController.gameObject.SetActive(true);
+            Destroy(ServerController.gameObject);
         }
+    }
 
-        public void StopClient()
+    public void StartClient()
+    {
+        if (ClientController != null && !  ClientController.isActiveAndEnabled)
+        {
+            DeStopServer();
+            Invoke("StartClient", Time.deltaTime * 3);
+        } else
+        {
+            if (ClientController != null)
+            {
+                ClientController.gameObject.SetActive(true);
+            }
+        }
+    }
+
+    public void StopClient()
+    {
+        if (ClientController != null)
         {
             ClientController.gameObject.SetActive(false);
         }
+    }
 
-        public void ToggleClient()
+    public void ToggleClient()
+    {
+        if (ClientController != null && !  ClientController.gameObject.active)
         {
-            ClientController.gameObject.SetActive( !  ClientController.gameObject.active);
+            DeStopServer();
+            Invoke("StartClient", Time.deltaTime * 3);
+        } else
+        {
+            if (ClientController != null)
+            {
+                ClientController.gameObject.SetActive(!  ClientController.gameObject.active);
+            }
         }
-      
-    
+    }
 }
