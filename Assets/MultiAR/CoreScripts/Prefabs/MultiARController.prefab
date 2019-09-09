@@ -90,6 +90,7 @@ GameObject:
   - component: {fileID: 114962951517112342}
   - component: {fileID: 114504722886925034}
   - component: {fileID: 114787928919029918}
+  - component: {fileID: 1018494344199770960}
   m_Layer: 0
   m_Name: MultiARController
   m_TagString: Untagged
@@ -170,6 +171,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   arCoreDevicePrefab: {fileID: 1772147192650458, guid: c10877f7cd5764de18d46d7b777d1faa,
     type: 3}
+--- !u!114 &1018494344199770960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1541651302486692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e78d5751e7894f48bbcdc9b818c61ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ServerController: {fileID: 0}
+  ClientController: {fileID: 0}
 --- !u!1 &1629984654954654
 GameObject:
   m_ObjectHideFlags: 0

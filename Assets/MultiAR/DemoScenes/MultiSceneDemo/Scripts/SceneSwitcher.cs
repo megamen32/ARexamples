@@ -5,15 +5,43 @@ using UnityEngine.SceneManagement;
 
 public class SceneSwitcher : MonoBehaviour
 {
-   
-        public void GotoMainScene()
+    [SerializeField] ArServerController ServerController;
+    [SerializeField] ArClientCloudAnchorController ClientController;
+
+    public void GotoMainScene()
         {
             SceneManager.LoadScene((SceneManager.GetActiveScene().buildIndex+1)%SceneManager.sceneCount);
         }
 
-        public void GotoMenuScene()
+        public void StartServer()
         {
-            SceneManager.LoadScene(Mathf.Max(0,SceneManager.GetActiveScene().buildIndex - 1) % SceneManager.sceneCount);
+          ServerController.gameObject.SetActive(true);
         }
+
+        public void StopServer()
+        {
+            ServerController.gameObject.SetActive(false);
+        }
+
+        public void ToggleServer()
+        {
+            ServerController.gameObject.SetActive( !  ServerController.gameObject.active);
+        }
+
+        public void StartClient()
+        {
+            ClientController.gameObject.SetActive(true);
+        }
+
+        public void StopClient()
+        {
+            ClientController.gameObject.SetActive(false);
+        }
+
+        public void ToggleClient()
+        {
+            ClientController.gameObject.SetActive( !  ClientController.gameObject.active);
+        }
+      
     
 }

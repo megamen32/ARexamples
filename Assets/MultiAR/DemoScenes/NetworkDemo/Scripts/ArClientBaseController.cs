@@ -229,6 +229,7 @@ public class ArClientBaseController : MonoBehaviour
 
 	protected virtual void Update()
 	{
+		;
 		if (!clientConnected) 
 		{
 			if(statusText)
@@ -265,6 +266,7 @@ public class ArClientBaseController : MonoBehaviour
 			netManager.networkAddress = serverHost;
 			netManager.networkPort = serverPort;
 			netClient = netManager.StartClient(null, config);
+			
 		}
 	}
 

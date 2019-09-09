@@ -32,7 +32,7 @@ namespace GoogleARCore.Examples.CloudAnchors
     /// <summary>
     /// Controller for the Cloud Anchors Example. Handles the ARCore lifecycle.
     /// </summary>
-    public class CloudAnchorsExampleController : MonoBehaviour
+    public class ArCloudAnchorsExampleController : MonoBehaviour
     {
         [Header("ARCore")]
 
@@ -44,7 +44,7 @@ namespace GoogleARCore.Examples.CloudAnchors
         /// <summary>
         /// The root for ARCore-specific GameObjects in the scene.
         /// </summary>
-     //   public GameObject ARCoreRoot;
+        public GameObject ARCoreRoot;
 
         /// <summary>
         /// The helper that will calculate the World Origin offset when performing a raycast or
@@ -57,12 +57,12 @@ namespace GoogleARCore.Examples.CloudAnchors
         /// <summary>
         /// The root for ARKit-specific GameObjects in the scene.
         /// </summary>
-  //      public GameObject ARKitRoot;
+        public GameObject ARKitRoot;
 
         /// <summary>
         /// The first-person camera used to render the AR background texture for ARKit.
         /// </summary>
-      //  public Camera ARKitFirstPersonCamera;
+        public Camera ARKitFirstPersonCamera;
 
         /// <summary>
         /// A helper object to ARKit functionality.
@@ -136,23 +136,33 @@ namespace GoogleARCore.Examples.CloudAnchors
         /// <summary>
         /// The Unity Start() method.
         /// </summary>
+            MultiARManager marc ;
         public void Start()
         {
 #pragma warning disable 618
             m_NetworkManager = UIController.GetComponent<CloudAnchorsNetworkManager>();
 #pragma warning restore 618
+           
             m_NetworkManager.OnClientConnected += _OnConnectedToServer;
             m_NetworkManager.OnClientDisconnected += _OnDisconnectedFromServer;
 
             // A Name is provided to the Game Object so it can be found by other Scripts
             // instantiated as prefabs in the scene.
             gameObject.name = "CloudAnchorsExampleController";
-            //ARCoreRoot.SetActive(false);
-         //   ARKitRoot.SetActive(false);
+            marc = FindObjectOfType<MultiARManager>();
+            if (marc != null)
+            {
+                marc.gameObject.SetActive(false);
+            } else
+            {
+
+                ARCoreRoot.SetActive(false);
+                ARKitRoot.SetActive(false);
+            }
+
             _ResetStatus();
         }
 
-       [SerializeField] MultiARManager marc;
         /// <summary>
         /// The Unity Update() method.
         /// </summary>
@@ -195,15 +205,14 @@ namespace GoogleARCore.Examples.CloudAnchors
             }
             else
             {
-              
                 Pose hitPose;
-                if ( marc.RaycastToWorld(
-                    true, out var hitHit))
+                if (m_ARKit.RaycastPlane(
+                    ARKitFirstPersonCamera, touch.position.x, touch.position.y, out hitPose))
                 {
-                    hitPose=new Pose(hitHit.point,hitHit.rotation);
                     m_LastHitPose = hitPose;
                 }
             }
+            
 
             // If there was an anchor placed, then instantiate the corresponding object.
             if (m_LastHitPose != null)
@@ -347,9 +356,8 @@ namespace GoogleARCore.Examples.CloudAnchors
             }
             else
             {
-                
-           //     _QuitWithReason("Connected to server with neither Hosting nor Resolving mode. " +
-            //                    "Please start the app again."+m_CurrentMode);
+                _QuitWithReason("Connected to server with neither Hosting nor Resolving mode. " +
+                                "Please start the app again.");
             }
         }
 
@@ -390,13 +398,13 @@ namespace GoogleARCore.Examples.CloudAnchors
         {
             if (Application.platform != RuntimePlatform.IPhonePlayer)
             {
-                //ARCoreRoot.SetActive(true);
-            //    ARKitRoot.SetActive(false);
+                ARCoreRoot.SetActive(true);
+                ARKitRoot.SetActive(false);
             }
             else
             {
-              //  ARCoreRoot.SetActive(false);
-              //  ARKitRoot.SetActive(true);
+                ARCoreRoot.SetActive(false);
+                ARKitRoot.SetActive(true);
             }
         }
 
@@ -432,7 +440,6 @@ namespace GoogleARCore.Examples.CloudAnchors
             }
 
             m_WorldOriginAnchor = null;
-            marc=MultiARManager.Instance;
         }
 
         /// <summary>

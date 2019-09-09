@@ -65,10 +65,8 @@
             </e>
           </e>
         </e>
+        <e p="gmsc.rsp" t="Include" />
         <e p="GoogleARCore" t="Include">
-          <e p="Editor" t="Include">
-            <e p="ARCoreiOSDependencies.template" t="Include" />
-          </e>
           <e p="Examples" t="Include">
             <e p="AugmentedFaces" t="Include">
               <e p="Materials" t="Include">
@@ -475,6 +473,10 @@
                 <e p="ArClientCloudAnchorController.cs" t="Include" />
                 <e p="ArServerController.cs" t="Include" />
                 <e p="ArSyncTransform.cs" t="Include" />
+                <e p="MyFiles" t="Include">
+                  <e p="ArNetworkManagaerUIController.cs" t="Include" />
+                  <e p="CloudAnchorsExampleController.cs" t="Include" />
+                </e>
                 <e p="NetworkMessages.cs" t="Include" />
               </e>
             </e>

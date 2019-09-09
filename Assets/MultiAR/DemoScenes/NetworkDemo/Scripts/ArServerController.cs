@@ -111,7 +111,9 @@ public class ArServerController : MonoBehaviour
 				}
 
 				// configure the network server
+#pragma warning disable 618
 				var config = new ConnectionConfig();
+#pragma warning restore 618
 				config.AddChannel(QosType.ReliableSequenced);
 				config.AddChannel(QosType.Unreliable);
 
