@@ -58,9 +58,7 @@ public class GetGameAnchorResponseMsg : MessageBase
 	//public string apiKey;
 	public byte[] anchorData;
 
-#pragma warning disable 618
 	public override void Serialize(NetworkWriter writer)
-#pragma warning restore 618
 	{
 		base.Serialize(writer);
 

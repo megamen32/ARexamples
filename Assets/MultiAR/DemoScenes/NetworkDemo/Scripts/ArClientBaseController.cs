@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -46,7 +47,7 @@ public class ArClientBaseController : MonoBehaviour
 	protected bool getAnchorAllowed = false;
 
 	// reference to the network manager
-	protected ClientNetworkManager netManager = null;
+	protected SimpleNetworkManager netManager = null;
 
 	// reference to the network client & discovery
 	protected NetworkClient netClient = null;
@@ -154,15 +155,16 @@ public class ArClientBaseController : MonoBehaviour
 			marManager = MultiARManager.Instance;
 
 			// setup network manager component
-			netManager = GetComponent<ClientNetworkManager>();
+			netManager = GetComponent<SimpleNetworkManager>();
 			if(netManager == null)
 			{
-				netManager = gameObject.AddComponent<ClientNetworkManager>();
+				netManager = gameObject.AddComponent<SimpleNetworkManager>();
+			
 			}
 
 			if(netManager != null)
 			{
-				netManager.arClient = this;
+			//	netManager.arClient = this;
 
 				if(playerPrefab != null)
 				{
@@ -211,6 +213,11 @@ public class ArClientBaseController : MonoBehaviour
 				statusText.text = ex.Message;
 			}
 		}
+	}
+
+	void OnClientConnect()
+	{
+		
 	}
 
 
@@ -266,6 +273,7 @@ public class ArClientBaseController : MonoBehaviour
 			netManager.networkAddress = serverHost;
 			netManager.networkPort = serverPort;
 			netClient = netManager.StartClient(null, config);
+			
 			
 		}
 	}
@@ -441,85 +449,51 @@ public class ArClientBaseController : MonoBehaviour
 
 }
 
-
-/// <summary>
-/// ArClient's NetworkManager component
-/// </summary>
-public class ClientNetworkManager : NetworkManager
+public class SimpleNetworkManager:NetworkManager
 {
-
-	public ArClientBaseController arClient;
-
-
-	public override void OnClientConnect(NetworkConnection conn)
+	public class CloudAnchorsNetworkManager : NetworkManager
+#pragma warning restore 618
 	{
-		//Debug.Log ("OnClientConnect");
-		base.OnClientConnect(conn);
+		/// <summary>
+		/// Action which get called when the client connects to a server.
+		/// </summary>
+		public event Action OnClientConnected;
 
-		if (arClient != null) 
+		/// <summary>
+		/// Action which get called when the client disconnects from a server.
+		/// </summary>
+		public event Action OnClientDisconnected;
+
+		/// <summary>
+		/// Called on the client when connected to a server.
+		/// </summary>
+		/// <param name="conn">Connection to the server.</param>
+#pragma warning disable 618
+		public override void OnClientConnect(NetworkConnection conn)
+#pragma warning restore 618
 		{
-			arClient.OnClientConnect(conn);
+			base.OnClientConnect(conn);
+			Debug.Log("Successfully connected to server: " + conn.lastError);
+			if (OnClientConnected != null)
+			{
+				OnClientConnected();
+			}
+		}
+
+		/// <summary>
+		/// Called on the client when disconnected from a server.
+		/// </summary>
+		/// <param name="conn">Connection to the server.</param>
+#pragma warning disable 618
+		public override void OnClientDisconnect(NetworkConnection conn)
+#pragma warning restore 618
+		{
+			base.OnClientDisconnect(conn);
+			Debug.Log("Disconnected from the server: " + conn.lastError);
+			if (OnClientDisconnected != null)
+			{
+				OnClientDisconnected();
+			}
 		}
 	}
-
-
-	public override void OnClientDisconnect(NetworkConnection conn)
-	{
-		//Debug.Log ("OnClientDisconnect");
-
-		if (arClient != null) 
-		{
-			arClient.OnClientDisconnect(conn);
-		}
-
-		base.OnClientDisconnect(conn);
-	}
-
-
-	public override void OnClientError(NetworkConnection conn, int errorCode)
-	{
-		base.OnClientError(conn, errorCode);
-
-		if (arClient != null) 
-		{
-			arClient.OnNetworkError(conn, errorCode);
-		}
-	}
-
 }
-
-
-/// <summary>
-/// ArClient's NetworkDiscovery component
-/// </summary>
-public class ClientNetworkDiscovery : NetworkDiscovery
-{
-
-	public ArClientBaseController arClient;
-
-
-	public override void OnReceivedBroadcast(string fromAddress, string data)
-	{
-		if (string.IsNullOrEmpty(data))
-			return;
-
-		// split the data
-		string[] items = data.Split(':');
-		if (items == null || items.Length < 3)
-			return;
-
-		if (arClient != null && items[0] == arClient.gameName && 
-			(arClient.serverHost == "0.0.0.0" || string.IsNullOrEmpty(arClient.serverHost)))
-		{
-			Debug.Log("GotBroadcast: " + data);
-
-			arClient.serverHost = items[1];
-			arClient.serverPort = int.Parse(items [2]);
-			//this.StopBroadcast();
-
-			arClient.ConnectToServer();
-		}
-	}
-
-}
-
