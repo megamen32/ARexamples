@@ -11,7 +11,7 @@ using GoogleARCore.Examples.CloudAnchors;
 using UnityEngine.Networking.Match;
 using UnityEngine.Networking.Types;
 
-public class ArServerController : MonoBehaviour
+public class ArServerController : ServerNetworkManager
 {
     [Tooltip("The name of the AR-game (used by client-server and broadcast messages).")]
     public string gameName = "ArGame";
@@ -22,13 +22,13 @@ public class ArServerController : MonoBehaviour
     //	[Tooltip("Port used for server broadcast discovery.")]
     //	public int broadcastPort = 7779;
 
-    [Tooltip("Maximum number of allowed connections.")]
-    public int maxConnections = 8;
+  //  [Tooltip("Maximum number of allowed connections.")]
+   // public int maxConnections = 8;
 
-    [Tooltip("Whether the server should use websockets or not.")]
-    public bool useWebSockets = false;
+   // [Tooltip("Whether the server should use websockets or not.")]
+    //public bool useWebSockets = false;
 
-    [Tooltip("Registered player prefab.")] public GameObject playerPrefab;
+        // [Tooltip("Registered player prefab.")] public GameObject playerPrefab;
 
     [Tooltip("UI-Text to display connection status messages.")]
     public Text connStatusText;
@@ -170,13 +170,7 @@ public class ArServerController : MonoBehaviour
                 }
 
                 // configure the network server
-                var config = new ConnectionConfig();
-                config.AddChannel(QosType.ReliableSequenced);
-                config.AddChannel(QosType.Unreliable);
-
-              netManager.StartMatchMaker();
-                netManager.matchMaker.ListMatches(startPageNumber: 0, resultPageSize: 5, matchNameFilter: string.Empty,
-                    filterOutPrivateMatchesFromResults: false, eloScoreTarget: 0, requestDomain: 0, callback: _OnMatchList);
+             
             }
 
          
@@ -191,6 +185,11 @@ public class ArServerController : MonoBehaviour
             NetworkServer.RegisterHandler(NetMsgType.CheckHostAnchorRequest, OnCheckHostAnchorRequest);
             NetworkServer.RegisterHandler(NetMsgType.SetGameAnchorRequest,   OnSetGameAnchorRequest);
             NetworkServer.RegisterHandler(NetMsgType.HandleSyncTransform,    ArSyncTransform.HandleSyncTransform);
+            var config = new ConnectionConfig();
+            config.AddChannel(QosType.ReliableSequenced);
+            config.AddChannel(QosType.Unreliable);
+
+          
 
             // get server ip address
 #if !UNITY_WSA
@@ -201,11 +200,11 @@ public class ArServerController : MonoBehaviour
 
 //#if NetDiscovery
 			// setup network discovery component
-            netDiscovery = GetComponent<NetworkDiscovery>();
+            netDiscovery = GetComponent<ClientNetworkDiscovery>();
 
             if(netDiscovery == null)
 			{
-				netDiscovery = gameObject.AddComponent<NetworkDiscovery>();
+				netDiscovery = gameObject.AddComponent<ClientNetworkDiscovery>();
 			}
 
 			if(netDiscovery != null)
@@ -216,8 +215,10 @@ public class ArServerController : MonoBehaviour
 				netDiscovery.showGUI       = true;
 
 				netDiscovery.Initialize();
-                
-                
+
+                netManager.StartMatchMaker();
+                netManager.matchMaker.ListMatches(startPageNumber: 0, resultPageSize: 5, matchNameFilter: string.Empty,
+                    filterOutPrivateMatchesFromResults: false, eloScoreTarget: 0, requestDomain: 0, callback: _OnMatchList);
               
             }
 
@@ -308,9 +309,9 @@ public class ArServerController : MonoBehaviour
         {
           //  var matchInfoSnapshot = netManager.matches.First(snapshot => snapshot.networkId == matchInfo.networkId);
           //  LogToConsole( "Room " + _GetRoomNumberFromNetworkId(matchInfoSnapshot.networkId));
-          netManager.matchName = matchInfo.address;
-          netManager.matchMaker.JoinMatch(matchInfo.networkId, string.Empty, string.Empty, string.Empty, 0, matchInfo.domain, _OnMatchJoined);
-           
+          //netManager.matchName = matchInfo.address;
+         // netManager.matchMaker.JoinMatch(matchInfo.networkId, string.Empty, string.Empty, string.Empty, 0, matchInfo.domain, _OnMatchJoined);
+           LogErrorToConsole("NO ROOMS ANYWHERE");
         } else
         {
             
@@ -500,7 +501,7 @@ ToggleServerUI(false);
 
             anchoredCube.transform.localPosition = Vector3.zero;
             anchoredCube.transform.localRotation = Quaternion.identity;
-           // anchoredCube.transform.localScale    = new Vector3(0.1f, 0.1f, 0.1f);
+            anchoredCube.transform.localScale    = new Vector3(0.1f, 0.1f, 0.1f);
         }
 
         SetGameAnchorResponseMsg response = new SetGameAnchorResponseMsg {confirmed = requestConfirmed,};

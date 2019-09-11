@@ -772,5 +772,13 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2008563232, guid: cb4d91dd0146cac4395f7dadfdec7aac, type: 3}
+      propertyPath: yuvMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 8fa2e9e7c08844dd4a8d581610839228, type: 2}
+    - target: {fileID: 2008563232, guid: cb4d91dd0146cac4395f7dadfdec7aac, type: 3}
+      propertyPath: cameraAlignment
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb4d91dd0146cac4395f7dadfdec7aac, type: 3}

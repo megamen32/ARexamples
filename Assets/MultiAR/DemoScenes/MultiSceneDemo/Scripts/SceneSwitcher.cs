@@ -11,7 +11,7 @@ public class SceneSwitcher : MonoBehaviour
 
     public void GotoMainScene()
     {
-        SceneManager.LoadScene(0);
+      Application.Quit(0);
     }
 
     public void StartServer()

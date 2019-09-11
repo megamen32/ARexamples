@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 
-public class ArClientBaseController : MonoBehaviour 
+public class ArClientBaseController : ClientNetworkManager 
 {
 	[Tooltip("The name of the AR-game (used by client-server and broadcast messages).")]
 	public string gameName = "ArGame";
@@ -22,11 +21,13 @@ public class ArClientBaseController : MonoBehaviour
 	[Tooltip("Try to reconnect after this amount of seconds.")]
 	public float reconnectAfterSeconds = 2f;
 
+	/*
 	[Tooltip("Registered player prefab.")]
 	public GameObject playerPrefab;
 
 	[Tooltip("Registered spawn prefabs.")]
 	public List<GameObject> spawnPrefabs = new List<GameObject>();
+	*/
 
 	[Tooltip("UI-Text to display status messages.")]
 	public UnityEngine.UI.Text statusText;
@@ -47,7 +48,7 @@ public class ArClientBaseController : MonoBehaviour
 	protected bool getAnchorAllowed = false;
 
 	// reference to the network manager
-	protected SimpleNetworkManager netManager = null;
+	protected ServerNetworkManager netManager = null;
 
 	// reference to the network client & discovery
 	protected NetworkClient netClient = null;
@@ -155,10 +156,10 @@ public class ArClientBaseController : MonoBehaviour
 			marManager = MultiARManager.Instance;
 
 			// setup network manager component
-			netManager = GetComponent<SimpleNetworkManager>();
+			netManager = GetComponent<ServerNetworkManager>();
 			if(netManager == null)
 			{
-				netManager = gameObject.AddComponent<SimpleNetworkManager>();
+				netManager = gameObject.AddComponent<ServerNetworkManager>();
 			
 			}
 
@@ -290,7 +291,7 @@ public class ArClientBaseController : MonoBehaviour
 
 
 	// handles Connect-message
-	public void OnClientConnect(NetworkConnection conn)
+	public override void OnClientConnect(NetworkConnection conn)
 	{
 		int connId = conn.connectionId;
 
@@ -316,7 +317,7 @@ public class ArClientBaseController : MonoBehaviour
 
 
 	// handles Disconnect-message
-	public void OnClientDisconnect(NetworkConnection conn)
+	public override void OnClientDisconnect(NetworkConnection conn)
 	{
 		int connId = conn.connectionId;
 
@@ -447,51 +448,4 @@ public class ArClientBaseController : MonoBehaviour
 		}
 	}
 
-}
-
-public class SimpleNetworkManager:NetworkManager
-{
-
-		/// <summary>
-		/// Action which get called when the client connects to a server.
-		/// </summary>
-		public event Action OnClientConnected;
-
-		/// <summary>
-		/// Action which get called when the client disconnects from a server.
-		/// </summary>
-		public event Action OnClientDisconnected;
-
-		/// <summary>
-		/// Called on the client when connected to a server.
-		/// </summary>
-		/// <param name="conn">Connection to the server.</param>
-#pragma warning disable 618
-		public override void OnClientConnect(NetworkConnection conn)
-#pragma warning restore 618
-		{
-			base.OnClientConnect(conn);
-			Debug.Log("Successfully connected to server: " + conn.lastError);
-			if (OnClientConnected != null)
-			{
-				OnClientConnected();
-			}
-		}
-
-		/// <summary>
-		/// Called on the client when disconnected from a server.
-		/// </summary>
-		/// <param name="conn">Connection to the server.</param>
-#pragma warning disable 618
-		public override void OnClientDisconnect(NetworkConnection conn)
-#pragma warning restore 618
-		{
-			base.OnClientDisconnect(conn);
-			Debug.Log("Disconnected from the server: " + conn.lastError);
-			if (OnClientDisconnected != null)
-			{
-				OnClientDisconnected();
-			}
-		}
-	
 }

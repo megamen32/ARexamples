@@ -20,7 +20,7 @@ public class PlayerController : NetworkBehaviour // MonoBehaviour
 	void Start()
 	{
 		arManager = MultiARManager.Instance;
-		arClient = ArClientBaseController.Instance;
+        arClient  = FindObjectOfType<ArClientCloudAnchorController>();
 	}
 
 
@@ -76,7 +76,7 @@ public class PlayerController : NetworkBehaviour // MonoBehaviour
 		NetworkServer.Spawn(bullet);
 
 		// Destroy the bullet after 2 seconds
-		Destroy(bullet, 2.0f);
+            Destroy(bullet, 4.0f);
 	}
 
 }
