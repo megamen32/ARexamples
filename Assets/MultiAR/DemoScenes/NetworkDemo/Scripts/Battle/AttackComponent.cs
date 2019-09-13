@@ -66,13 +66,13 @@ public class AttackComponent : NetworkBehaviour
     }
 
     [Command]
-    void RequestTriggerBlast()
+    void CmdRequestTriggerBlast()
     {
         StartCoroutine(AbilityCooldown());
     }
 
     [Command]
-    void RequestCastingShield(bool status)
+    void CmdRequestCastingShield(bool status)
     {
         arClient.netClient.Send(NetMsgType.AttackRequest,
             new AttackMSG
@@ -110,7 +110,7 @@ public class AttackComponent : NetworkBehaviour
 
 
     [ClientRpc]
-    public void DoShield (AttackMSG.AttackMode _isActivated)
+    public void RpcDoShield (AttackMSG.AttackMode _isActivated)
     {
         var status = _isActivated == AttackMSG.AttackMode.Primary;
         if (status != shieldActivated)
@@ -121,7 +121,7 @@ public class AttackComponent : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void DoBlast(AttackMSG.AttackMode attackAttackMode)
+    public void RpcDoBlast(AttackMSG.AttackMode attackAttackMode)
     {
         switch (attackAttackMode)
         {
@@ -138,7 +138,7 @@ public class AttackComponent : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void DoBullet(AttackMSG.AttackMode attackAttackMode)
+    public void RpcDoBullet(AttackMSG.AttackMode attackAttackMode)
     {
         switch (attackAttackMode)
         {
@@ -189,7 +189,7 @@ public class AttackComponent : NetworkBehaviour
                     // If the timer is a long press, then activate the shield
                     if (timer > longPressCutoff)
                     {
-                        RequestCastingShield(true);
+                        CmdRequestCastingShield(true);
                     }
                 }
 
@@ -199,11 +199,11 @@ public class AttackComponent : NetworkBehaviour
                     if (timer < longPressCutoff)
                     {
                         // Tap ended
-                        RequestTriggerBlast();
+                        CmdRequestTriggerBlast();
                     } else
                     {
                         // Long press ended
-                        RequestCastingShield(false);
+                        CmdRequestCastingShield(false);
                     }
 
                     isPressed = false;
@@ -237,7 +237,7 @@ public class AttackComponent : NetworkBehaviour
                 // If the timer is a long press, then activate the shield
                 if (timer > longPressCutoff)
                 {
-                    RequestCastingShield(true);
+                    CmdRequestCastingShield(true);
                 }
             }
 
@@ -247,13 +247,13 @@ public class AttackComponent : NetworkBehaviour
                 if (timer < longPressCutoff)
                 {
                     // Tap ended
-                    RequestTriggerBlast();
+                    CmdRequestTriggerBlast();
                 } else
                 {
                     // Long press ended
                     if (shieldActivated)
                     {
-                        RequestCastingShield(false);
+                        CmdRequestCastingShield(false);
                     }
                 }
 

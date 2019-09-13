@@ -96,7 +96,8 @@ public partial class ArServerController : MonoBehaviour
     {
         m_CurrentMode = CloudAnchorsExampleController.ApplicationMode.Hosting;
         netManager.matchMaker.CreateMatch(netManager.matchName, netManager.matchSize, true, string.Empty, string.Empty, string.Empty, 0, 0, _OnMatchCreate);
-        netDiscovery.StartAsServer();
+
+     
     }
 
     private void _OnConnectedToServer()
@@ -226,7 +227,7 @@ public partial class ArServerController : MonoBehaviour
             LogConnections();
         } catch (System.Exception ex)
         {
-            Debug.LogError(ex.Message + "\n" + ex.StackTrace);
+             LogErrorToConsole(ex.Message + "\n" + ex.StackTrace);
 
             if (serverStatusText)
             {
@@ -329,14 +330,14 @@ ToggleServerUI(false);
     void OnDestroy()
     {
         // shutdown the server and disconnect all clients
-        if (netManager && netManager.isNetworkActive)
+        if (netManager!=null&&NetworkServer.active && netManager.isNetworkActive)
         {
             netManager.StopServer();
-            if (netDiscovery.hostId != -1) netDiscovery.StopBroadcast();
+            if (netDiscovery != null && netDiscovery.hostId != -1) netDiscovery.StopBroadcast();
         }
 
         string sMessage = gameName + "-Server stopped.";
-        Debug.Log(sMessage);
+         LogDebugToConsole(sMessage);
     }
 
 
@@ -456,14 +457,14 @@ ToggleServerUI(false);
         switch (attack.attackType)
         {
             case        AttackMSG.AttackType.Blast:
-                player.Attack.DoBlast(attack.attackMode);
+                player.Attack.RpcDoBlast(attack.attackMode);
                 break;
 
             case AttackMSG.AttackType.Bullet:
-                player.Attack.DoBullet(attack.attackMode);
+                player.Attack.RpcDoBullet(attack.attackMode);
                 break;
             case AttackMSG.AttackType.Shield:
-                player.Attack.DoShield(attack.attackMode);
+                player.Attack.RpcDoShield(attack.attackMode);
                 break;
             default:
                 LogErrorToConsole("Can't response message'"+attack.attackMode+" , "+attack.attackType);
