@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 
-public class ArClientBaseController : ClientNetworkManager 
+public class ArClientBaseController : MonoBehaviour ,IAnchored
 {
 	[Tooltip("The name of the AR-game (used by client-server and broadcast messages).")]
 	public string gameName = "ArGame";
@@ -30,7 +31,7 @@ public class ArClientBaseController : ClientNetworkManager
 	*/
 
 	[Tooltip("UI-Text to display status messages.")]
-	public UnityEngine.UI.Text statusText;
+	public TextMeshProUGUI statusText;
 
 	[Tooltip("Whether to show debug messages.")]
 	public bool showDebugMessages;
@@ -68,6 +69,8 @@ public class ArClientBaseController : ClientNetworkManager
 
 	// saved anchor data, if any
 	protected byte[] worldAnchorData = null;
+	[SerializeField] GameObject playerPrefab;
+	[SerializeField] GameObject[] spawnPrefabs;
 
 
 	/// <summary>
@@ -160,7 +163,8 @@ public class ArClientBaseController : ClientNetworkManager
 			if(netManager == null)
 			{
 				netManager = gameObject.AddComponent<ServerNetworkManager>();
-			
+				netManager.OnClientConnected += OnClientConnect;
+				netManager.OnClientDisconnected += OnClientDisconnect;
 			}
 
 			if(netManager != null)
@@ -172,7 +176,7 @@ public class ArClientBaseController : ClientNetworkManager
 					netManager.playerPrefab = playerPrefab;
 				}
 
-				if(spawnPrefabs != null && spawnPrefabs.Count > 0)
+				if(spawnPrefabs != null && spawnPrefabs.Length > 0)
 				{
 					netManager.spawnPrefabs.AddRange(spawnPrefabs);
 				}
@@ -196,9 +200,9 @@ public class ArClientBaseController : ClientNetworkManager
 				{
 					netDiscovery.arClient = this;
 					//netDiscovery.broadcastPort = broadcastPort;
-					//netDiscovery.broadcastKey = serverPort;
-					//netDiscovery.broadcastData = gameName;
-					netDiscovery.showGUI = false;
+					netDiscovery.broadcastKey = serverPort;
+					netDiscovery.broadcastData = gameName;
+					netDiscovery.showGUI = true;
 
 					netDiscovery.Initialize();
 					netDiscovery.StartAsClient();
@@ -216,11 +220,7 @@ public class ArClientBaseController : ClientNetworkManager
 		}
 	}
 
-	void OnClientConnect()
-	{
-		
-	}
-
+	
 
 	protected virtual void OnDestroy()
 	{
@@ -237,26 +237,28 @@ public class ArClientBaseController : ClientNetworkManager
 
 	protected virtual void Update()
 	{
-		;
-		if (!clientConnected) 
+		//base.Update();
+		if (clientConnected)
 		{
-			if(statusText)
-			{
-				if(string.IsNullOrEmpty(serverHost) || serverHost == "0.0.0.0")
-					statusText.text = "Looking for game server...";
-				else if(disconnectedAt == 0f)
-					statusText.text = "Connecting to game server: " + serverHost;
-				else
-					statusText.text = "Reconnecting to: " + serverHost;
-			}
+			return;
+		}
 
-			if (disconnectedAt > 0f && (Time.realtimeSinceStartup - disconnectedAt) >= reconnectAfterSeconds) 
-			{
-				disconnectedAt = 0f;
+		if(statusText)
+		{
+			if(string.IsNullOrEmpty(serverHost) || serverHost == "0.0.0.0")
+				statusText.text = "Looking for game server...";
+			else if(disconnectedAt == 0f)
+				statusText.text = "Connecting to game server: " + serverHost;
+			else
+				statusText.text = "Reconnecting to: " + serverHost;
+		}
 
-				// try to reconnect
-				ConnectToServer();
-			}
+		if (disconnectedAt > 0f && (Time.realtimeSinceStartup - disconnectedAt) >= reconnectAfterSeconds) 
+		{
+			disconnectedAt = 0f;
+
+			// try to reconnect
+			ConnectToServer();
 		}
 	}
 
@@ -289,17 +291,17 @@ public class ArClientBaseController : ClientNetworkManager
 		LogErrorMessage(sErrorMessage);
 	}
 
-
+	int coonectionID;
 	// handles Connect-message
-	public override void OnClientConnect(NetworkConnection conn)
+	public /*override*/ void OnClientConnect(NetworkConnection conn)
 	{
-		int connId = conn.connectionId;
+		coonectionID = conn.connectionId;
 
 		clientConnected = true;
 		disconnectedAt = 0f;
 //		dataReceivedAt = Time.realtimeSinceStartup;
 
-		LogDebugMessage("Connected client " + connId + " to: " + conn.address);
+		LogDebugMessage("Connected client " + coonectionID + " to: " + conn.address);
 
 		// register client handlers
 		conn.RegisterHandler(NetMsgType.GetGameAnchorResponse, OnGetGameAnchorResponse);
@@ -317,7 +319,7 @@ public class ArClientBaseController : ClientNetworkManager
 
 
 	// handles Disconnect-message
-	public override void OnClientDisconnect(NetworkConnection conn)
+	public /*override*/ void OnClientDisconnect(NetworkConnection conn)
 	{
 		int connId = conn.connectionId;
 
@@ -416,6 +418,7 @@ public class ArClientBaseController : ClientNetworkManager
 	// logs the given message to console and the screen
 	protected void LogMessage(string sMessage)
 	{
+		FormatLog(ref sMessage);
 		Debug.Log(sMessage);
 
 		if(statusText)
@@ -428,6 +431,7 @@ public class ArClientBaseController : ClientNetworkManager
 	// logs the given error message to console and the screen
 	protected void LogErrorMessage(string sMessage)
 	{
+		 FormatLog(ref sMessage);
 		Debug.LogError(sMessage);
 
 		if(statusText)
@@ -440,6 +444,7 @@ public class ArClientBaseController : ClientNetworkManager
 	// logs the given debug message to console and the screen
 	protected void LogDebugMessage(string sMessage)
 	{
+		 FormatLog(ref sMessage);
 		Debug.Log(sMessage);
 
         if (statusText && showDebugMessages)
@@ -447,4 +452,10 @@ public class ArClientBaseController : ClientNetworkManager
             statusText.text = sMessage;
         }
     }
+
+	string FormatLog(ref string sMessage)
+	{
+		sMessage = sMessage.Insert(0, $"Client: ");
+		return sMessage;
+	}
 }

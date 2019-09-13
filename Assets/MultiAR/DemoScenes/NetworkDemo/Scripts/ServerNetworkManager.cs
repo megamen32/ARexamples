@@ -7,12 +7,12 @@ using UnityEngine.Networking;
 public class ServerNetworkManager : NetworkManager
 {
     public ArServerController arServer;
-    public event Action       OnClientConnected;
+    public event Action<NetworkConnection>       OnClientConnected;
 
     /// <summary>
     /// Action which get called when the client disconnects from a server.
     /// </summary>
-    public event Action OnClientDisconnected;
+    public event Action<NetworkConnection> OnClientDisconnected;
 
 
     public override void OnServerConnect(NetworkConnection conn)
@@ -24,7 +24,7 @@ public class ServerNetworkManager : NetworkManager
             int connId = conn.connectionId;
             arServer.LogToConsole("Connected client " + connId + ", IP: " + conn.address);
             arServer.numConnections++;
-            OnClientConnected?.Invoke();
+            OnClientConnected?.Invoke(conn);
             arServer.LogConnections();
         }
     }
@@ -39,7 +39,7 @@ public class ServerNetworkManager : NetworkManager
 
             arServer.numConnections--;
 
-            OnClientDisconnected?.Invoke();
+            OnClientDisconnected?.Invoke(conn);
             arServer.LogConnections();
         }
 

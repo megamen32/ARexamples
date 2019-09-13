@@ -7,7 +7,7 @@ public class ProjectileSettings : ScriptableObject
     public int        damage;
     public float      lifetime;
 }
-
+[RequireComponent(typeof(Rigidbody))]
 public class Projectile : MonoBehaviour
 {
     [HideInInspector] public ClientPlayerController ClientPlayerOwner;
@@ -31,12 +31,14 @@ public class Projectile : MonoBehaviour
     void Start ()
     {
         collidedEffect     = Instantiate(projectileSettings.collidedEffectsPrefab, this.gameObject.transform).GetComponentInChildren<ParticleSystem>();
+        if(rigidbodyComponent==null)
         rigidbodyComponent = this.gameObject.GetComponent<Rigidbody>();
     }
 
     // Called each time the project is launched
     public void Reset ()
     {
+        rigidbodyComponent = this.gameObject.GetComponent<Rigidbody>();
         rigidbodyComponent.velocity        = Vector3.zero; // Get rid of the velocity from previous shot
         rigidbodyComponent.angularVelocity = Vector3.zero; // Get rid of the angular velocity from previous shot	
         rigidbodyComponent.isKinematic     = false;

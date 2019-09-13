@@ -3,6 +3,7 @@
   <component name="ContentModelUserStore">
     <attachedFolders>
       <Path>Assets/MultiAR/DemoScenes/NetworkDemo/Scripts/Network</Path>
+      <Path>Assets/MultiAR/DemoScenes/NetworkDemo/Scripts/Network/Server</Path>
     </attachedFolders>
     <explicitIncludes>
       <Path>Library/PackageCache/com.unity.collab-proxy@1.2.16</Path>

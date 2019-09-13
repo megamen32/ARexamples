@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections.Generic;
+using System.Linq;
 
 
 [DisallowMultipleComponent]
@@ -173,14 +174,8 @@ public class ArSyncTransform : NetworkBehaviour
 
 	private void SetAnchorTransform()
 	{
-		if (m_arServer) 
-		{
-			anchorTransform = m_arServer.GetAnchorTransform();
-		}
-		else if (m_arClient) 
-		{
-			anchorTransform = m_arClient.GetAnchorTransform();
-		}
+		anchorTransform=	new IAnchored[] {m_arServer, m_arClient}.FirstOrDefault(x => x != null && x.GetAnchorTransform() != null)?.GetAnchorTransform();
+		
 	}
 
 	void FixedUpdate()

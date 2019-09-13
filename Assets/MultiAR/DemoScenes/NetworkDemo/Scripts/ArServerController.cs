@@ -11,7 +11,7 @@ using UnityEngine.Networking.Match;
 using UnityEngine.Networking.Types;
 using PlayerController = UnityEngine.Networking.PlayerController;
 
-public partial class ArServerController : MonoBehaviour
+public partial class ArServerController : MonoBehaviour, IAnchored
 {
     [Tooltip("The name of the AR-game (used by client-server and broadcast messages).")]
     public string gameName = "ArGame";
@@ -87,65 +87,24 @@ public partial class ArServerController : MonoBehaviour
         return null;
     }
 
+#region ServerCreation
+
+    
+
+   
     NetworkManager                                manager;
+
     string                                        m_CurrentRoomNumber;
+
     CloudAnchorsExampleController.ApplicationMode m_CurrentMode = CloudAnchorsExampleController.ApplicationMode.Ready;
+
     bool                                          m_IsQuitting  = false;
+    NetworkDiscovery netDiscovery  ;
 
-    public void OnCreateRoomClicked()
-    {
-        m_CurrentMode = CloudAnchorsExampleController.ApplicationMode.Hosting;
-        netManager.matchMaker.CreateMatch(netManager.matchName, netManager.matchSize, true, string.Empty, string.Empty, string.Empty, 0, 0, _OnMatchCreate);
+    [SerializeField] bool useWebSockets;
 
-     
-    }
-
-    private void _OnConnectedToServer()
-    {
-        if (m_CurrentMode == CloudAnchorsExampleController.ApplicationMode.Hosting)
-        {
-            LogToConsole("Find a plane, tap to create a Cloud Anchor.");
-        } else if (m_CurrentMode == CloudAnchorsExampleController.ApplicationMode.Resolving)
-        {
-            LogToConsole("Waiting for Cloud Anchor to be hosted...");
-        } else
-        {
-            LogToConsole("Connected to server with neither Hosting nor Resolving mod\n Please start the app again.");
-        }
-    }
-
-    private void _OnDisconnectedFromServer()
-    {
-        _QuitWithReason("Network session disconnected! " + "Please start the app again and try another room.");
-    }
-
-    /// <summary>                                                            
-    /// Quits the application after 5 seconds for the toast to appear.       
-    /// </summary>                                                           
-    /// <param name="reason">The reason of quitting the application.</param> 
-    private void _QuitWithReason(string reason)
-    {
-        if (m_IsQuitting)
-        {
-            return;
-        }
-
-        LogToConsole(reason);
-        m_IsQuitting = true;
-        Invoke("_DoQuit", 5.0f);
-    }
-
-    /// <summary>                        
-    /// Actually quit the application.   
-    /// </summary>                       
-    private void _DoQuit()
-    {
-        Application.Quit();
-    }
-
-    NetworkDiscovery            netDiscovery  ;
-    [SerializeField] bool       useWebSockets;
     [SerializeField] GameObject playerPrefab;
+
 
     void Start ()
     {
@@ -157,8 +116,7 @@ public partial class ArServerController : MonoBehaviour
             if (netManager == null)
             {
                 netManager                      =  gameObject.AddComponent<ServerNetworkManager>();
-                netManager.OnClientConnected    += _OnConnectedToServer;
-                netManager.OnClientDisconnected += _OnDisconnectedFromServer;
+                
             }
 
             // start the server
@@ -169,6 +127,8 @@ public partial class ArServerController : MonoBehaviour
 
             }
 
+            netManager.OnClientConnected    += _OnConnectedToServer;
+            netManager.OnClientDisconnected += _OnDisconnectedFromServer;
             netManager.arServer = this;
 
             netManager.networkPort   = listenOnPort;
@@ -215,19 +175,19 @@ public partial class ArServerController : MonoBehaviour
 
 
 
-             string sMessage = gameName + "-Server started on " + serverHost + ":" + listenOnPort;
-           LogToConsole(sMessage);
+        //    string sMessage = gameName + "-Server started on " + serverHost + ":" + listenOnPort;
+          //  LogToConsole(sMessage);
 
             if (serverStatusText)
             {
-                serverStatusText.text = sMessage;
+           //     serverStatusText.text = sMessage;
             }
 
             // show current connections
             LogConnections();
         } catch (System.Exception ex)
         {
-             LogErrorToConsole(ex.Message + "\n" + ex.StackTrace);
+            LogErrorToConsole(ex.Message + "\n" + ex.StackTrace);
 
             if (serverStatusText)
             {
@@ -236,7 +196,48 @@ public partial class ArServerController : MonoBehaviour
         }
     }
 
+    public void OnCreateRoomClicked()
+    {
+        m_CurrentMode = CloudAnchorsExampleController.ApplicationMode.Hosting;
+        netManager.matchMaker.CreateMatch(netManager.matchName, netManager.matchSize, true, string.Empty, string.Empty, string.Empty, 0, 0, _OnMatchCreate);
 
+     
+    }
+
+    private void _OnConnectedToServer(NetworkConnection networkConnection)
+    {
+        if (m_CurrentMode == CloudAnchorsExampleController.ApplicationMode.Hosting)
+        {
+            LogToConsole("Find a plane, tap to create a Cloud Anchor.");
+        } else if (m_CurrentMode == CloudAnchorsExampleController.ApplicationMode.Resolving)
+        {
+            LogToConsole("Waiting for Cloud Anchor to be hosted...");
+        } else
+        {
+            LogToConsole("Connected to server with neither Hosting nor Resolving mod\n Please start the app again.");
+        }
+    }
+
+    private void _OnDisconnectedFromServer(NetworkConnection networkConnection)
+    {
+        _QuitWithReason("Network session disconnected! " + "Please start the app again and try another room.");
+    }
+
+    /// <summary>                                                            
+    /// Quits the application after 5 seconds for the toast to appear.       
+    /// </summary>                                                           
+    /// <param name="reason">The reason of quitting the application.</param> 
+    private void _QuitWithReason(string reason)
+    {
+        if (m_IsQuitting)
+        {
+            return;
+        }
+
+        LogToConsole(reason);
+        m_IsQuitting = true;
+        Invoke("_DoQuit", 5.0f);
+    }
 
 
     void _OnMatchList(bool success, string extendedInfo, List<MatchInfoSnapshot> responseData)
@@ -280,9 +281,9 @@ public partial class ArServerController : MonoBehaviour
 
 
         m_CurrentRoomNumber = _GetRoomNumberFromNetworkId(matchInfo.networkId);
-        LogToConsole( "Connecting to server...");
+        // LogToConsole( "");
 
-        LogToConsole( "Room: " + m_CurrentRoomNumber);
+        LogToConsole( "Connected Successfully Room: " + m_CurrentRoomNumber);
     }
 
     void _OnMatchCreate(bool success, string extendedInfo, MatchInfo matchInfo)
@@ -316,6 +317,8 @@ ToggleServerUI(false);
 #endif
     }
 
+#endregion
+
     void ToggleServerUI(bool visible)
     {
         //   consoleMessages.gameObject.SetActive(visible);
@@ -325,21 +328,6 @@ ToggleServerUI(false);
     {
         return (System.Convert.ToInt64(networkID.ToString()) % 10000).ToString();
     }
-
-
-    void OnDestroy()
-    {
-        // shutdown the server and disconnect all clients
-        if (netManager!=null&&NetworkServer.active && netManager.isNetworkActive)
-        {
-            netManager.StopServer();
-            if (netDiscovery != null && netDiscovery.hostId != -1) netDiscovery.StopBroadcast();
-        }
-
-        string sMessage = gameName + "-Server stopped.";
-         LogDebugToConsole(sMessage);
-    }
-
 
     void Update ()
     {
@@ -368,8 +356,34 @@ ToggleServerUI(false);
         }
     }
 
+#region Exit 
+
+    void OnDestroy()
+    {
+        // shutdown the server and disconnect all clients
+        if (netManager!=null&&NetworkServer.active && netManager.isNetworkActive&&!m_IsQuitting)
+        {
+            netManager.StopServer();
+            if (netDiscovery != null && netDiscovery.hostId != -1) netDiscovery.StopBroadcast();
+        string sMessage = gameName + "-Server stopped.";
+         LogDebugToConsole(sMessage);
+        }
+m_IsQuitting = true;
+    }
+
+
 #if !UNITY_WSA
     // Gets the device IP address.
+    /// <summary>                        
+    /// Actually quit the application.   
+    /// </summary>                       
+    private void _DoQuit()
+    {
+        Application.Quit();
+        m_IsQuitting = true;
+    }
+
+
     private string GetDeviceIpAddress()
     {
         string ipAddress = "127.0.0.1";
@@ -392,8 +406,10 @@ ToggleServerUI(false);
 
         return ipAddress;
     }
+
 #endif
 
+#endregion
 #region Battle
 
     void OnAttackRequest(NetworkMessage netMsg)

@@ -68,7 +68,22 @@ public class ClientPlayerController : NetworkBehaviour // MonoBehaviour
 
         if (arClient == null || arClient.WorldAnchorObj == null || !arManager || !arManager.IsInitialized() || !arManager.IsInputAvailable(true))
         {
-            return;
+            
         }
     }
+
+    public void SpawnAnchor(Vector3 position, Quaternion rotation, Component anchor)
+    {
+        // Instantiate Anchor model at the hit pose.
+        var anchorObject = Instantiate(bulletPrefab, position, rotation);
+
+        // Anchor must be hosted in the device.
+
+        // Host can spawn directly without using a Command because the server is running in this
+        // instance.
+#pragma warning disable 618
+        NetworkServer.Spawn(anchorObject);
+#pragma warning restore 618
+    }
+    
 }
