@@ -1,5 +1,4 @@
 using System;
-
 using UnityEngine.Networking;
 
 /// <summary>
@@ -7,14 +6,13 @@ using UnityEngine.Networking;
 /// </summary>
 public class ServerNetworkManager : NetworkManager
 {
-    public event Action OnClientConnected;
+    public ArServerController arServer;
+    public event Action       OnClientConnected;
 
     /// <summary>
     /// Action which get called when the client disconnects from a server.
     /// </summary>
     public event Action OnClientDisconnected;
-
-    public ArServerController arServer;
 
 
     public override void OnServerConnect(NetworkConnection conn)

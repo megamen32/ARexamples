@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,8 +9,9 @@ using System.Net;
 using GoogleARCore.Examples.CloudAnchors;
 using UnityEngine.Networking.Match;
 using UnityEngine.Networking.Types;
+using PlayerController = UnityEngine.Networking.PlayerController;
 
-public class ArServerController : ServerNetworkManager
+public partial class ArServerController : MonoBehaviour
 {
     [Tooltip("The name of the AR-game (used by client-server and broadcast messages).")]
     public string gameName = "ArGame";
@@ -22,13 +22,13 @@ public class ArServerController : ServerNetworkManager
     //	[Tooltip("Port used for server broadcast discovery.")]
     //	public int broadcastPort = 7779;
 
-  //  [Tooltip("Maximum number of allowed connections.")]
-   // public int maxConnections = 8;
+    //  [Tooltip("Maximum number of allowed connections.")]
+    // public int maxConnections = 8;
 
-   // [Tooltip("Whether the server should use websockets or not.")]
+    // [Tooltip("Whether the server should use websockets or not.")]
     //public bool useWebSockets = false;
 
-        // [Tooltip("Registered player prefab.")] public GameObject playerPrefab;
+    // [Tooltip("Registered player prefab.")] public GameObject playerPrefab;
 
     [Tooltip("UI-Text to display connection status messages.")]
     public Text connStatusText;
@@ -87,10 +87,10 @@ public class ArServerController : ServerNetworkManager
         return null;
     }
 
-    NetworkManager manager;
-    string         m_CurrentRoomNumber;
-    CloudAnchorsExampleController.ApplicationMode m_CurrentMode=CloudAnchorsExampleController.ApplicationMode.Ready;
-    bool m_IsQuitting=false;
+    NetworkManager                                manager;
+    string                                        m_CurrentRoomNumber;
+    CloudAnchorsExampleController.ApplicationMode m_CurrentMode = CloudAnchorsExampleController.ApplicationMode.Ready;
+    bool                                          m_IsQuitting  = false;
 
     public void OnCreateRoomClicked()
     {
@@ -140,40 +140,50 @@ public class ArServerController : ServerNetworkManager
     private void _DoQuit()
     {
         Application.Quit();
-    }                                    
+    }
 
-        NetworkDiscovery netDiscovery  ;
+    NetworkDiscovery            netDiscovery  ;
+    [SerializeField] bool       useWebSockets;
+    [SerializeField] GameObject playerPrefab;
+
     void Start ()
     {
+        gameObjects = new List<GameObject>(MaxObjectCount);
         try
         {
             // setup network manager component
             netManager = GetComponent<ServerNetworkManager>();
             if (netManager == null)
             {
-                netManager = gameObject.AddComponent<ServerNetworkManager>();
-                netManager.OnClientConnected += _OnConnectedToServer;
+                netManager                      =  gameObject.AddComponent<ServerNetworkManager>();
+                netManager.OnClientConnected    += _OnConnectedToServer;
                 netManager.OnClientDisconnected += _OnDisconnectedFromServer;
             }
 
             // start the server
-            if (netManager != null)
+            if (netManager == null)
             {
-                netManager.arServer = this;
+                LogErrorToConsole("Server disapear");
+                return;
 
-                netManager.networkPort   = listenOnPort;
-                netManager.useWebSockets = useWebSockets;
-
-                if (playerPrefab != null)
-                {
-                    netManager.playerPrefab = playerPrefab;
-                }
-
-                // configure the network server
-             
             }
 
-         
+            netManager.arServer = this;
+
+            netManager.networkPort   = listenOnPort;
+            netManager.useWebSockets = useWebSockets;
+
+            if (playerPrefab != null)
+            {
+                netManager.playerPrefab = playerPrefab;
+            }
+
+            // configure the network server
+#pragma warning disable 618
+            var config = new ConnectionConfig();
+#pragma warning restore 618
+            config.AddChannel(QosType.ReliableSequenced);
+            config.AddChannel(QosType.Unreliable);
 
 
             /// <summary>
@@ -185,11 +195,8 @@ public class ArServerController : ServerNetworkManager
             NetworkServer.RegisterHandler(NetMsgType.CheckHostAnchorRequest, OnCheckHostAnchorRequest);
             NetworkServer.RegisterHandler(NetMsgType.SetGameAnchorRequest,   OnSetGameAnchorRequest);
             NetworkServer.RegisterHandler(NetMsgType.HandleSyncTransform,    ArSyncTransform.HandleSyncTransform);
-            var config = new ConnectionConfig();
-            config.AddChannel(QosType.ReliableSequenced);
-            config.AddChannel(QosType.Unreliable);
-
-          
+            NetworkServer.RegisterHandler(NetMsgType.AttackRequest,          OnAttackRequest);
+            NetworkServer.RegisterHandler(NetMsgType.SetGameObjectRequest,   OnSpawnObject);
 
             // get server ip address
 #if !UNITY_WSA
@@ -198,47 +205,17 @@ public class ArServerController : ServerNetworkManager
 			string serverHost = "127.0.0.1";
 #endif
 
-//#if NetDiscovery
-			// setup network discovery component
-            netDiscovery = GetComponent<ClientNetworkDiscovery>();
-
-            if(netDiscovery == null)
-			{
-				netDiscovery = gameObject.AddComponent<ClientNetworkDiscovery>();
-			}
-
-			if(netDiscovery != null)
-			{
-				//netDiscovery.broadcastPort = broadcastPort;
-				//netDiscovery.broadcastKey = listenOnPort;
-				netDiscovery.broadcastData = gameName + ":" + serverHost + ":" + listenOnPort;
-				netDiscovery.showGUI       = true;
-
-				netDiscovery.Initialize();
-
-                netManager.StartMatchMaker();
-                netManager.matchMaker.ListMatches(startPageNumber: 0, resultPageSize: 5, matchNameFilter: string.Empty,
-                    filterOutPrivateMatchesFromResults: false, eloScoreTarget: 0, requestDomain: 0, callback: _OnMatchList);
-              
-            }
 
 
-            void _OnMatchList(bool success, string extendedInfo, List<MatchInfoSnapshot> responseData)
-            {
-                if (success && responseData.Count > 0)
-                {
-                  
-                    netManager.OnMatchList(success, extendedInfo, responseData);
 
-                    _OnJoinRoomClicked(responseData.OrderByDescending(snapshot => snapshot.currentSize).
-                                                    First(delegate (MatchInfoSnapshot snapshot) { return snapshot.currentSize < snapshot.maxSize ; }));
-                } else
-                {
-                    OnCreateRoomClicked();
-                }
-            }
-            string sMessage = gameName + "-Server started on " + serverHost + ":" + listenOnPort;
-            Debug.Log(sMessage);
+            netManager.StartMatchMaker();
+            netManager.matchMaker.ListMatches(startPageNumber: 0, resultPageSize: 5, matchNameFilter: string.Empty, filterOutPrivateMatchesFromResults: false,
+                eloScoreTarget: 0, requestDomain: 0, callback: _OnMatchList);
+
+
+
+             string sMessage = gameName + "-Server started on " + serverHost + ":" + listenOnPort;
+           LogToConsole(sMessage);
 
             if (serverStatusText)
             {
@@ -258,6 +235,23 @@ public class ArServerController : ServerNetworkManager
         }
     }
 
+
+
+
+    void _OnMatchList(bool success, string extendedInfo, List<MatchInfoSnapshot> responseData)
+    {
+        if (success && responseData.Count > 0)
+        {
+            netManager.OnMatchList(success, extendedInfo, responseData);
+
+            _OnJoinRoomClicked(responseData.OrderByDescending(snapshot => snapshot.currentSize).
+                                            First(delegate (MatchInfoSnapshot snapshot) { return snapshot.currentSize < snapshot.maxSize ; }));
+        } else
+        {
+            OnCreateRoomClicked();
+        }
+    }
+
     /// <summary>
     /// Handles the user intent to join the room associated with the button clicked.
     /// </summary>
@@ -267,7 +261,7 @@ public class ArServerController : ServerNetworkManager
     private void _OnJoinRoomClicked(MatchInfoSnapshot match)
 #pragma warning restore 618
     {
-        m_CurrentMode = CloudAnchorsExampleController.ApplicationMode.Resolving;
+        m_CurrentMode        = CloudAnchorsExampleController.ApplicationMode.Resolving;
         netManager.matchName = match.name;
         netManager.matchMaker.JoinMatch(match.networkId, string.Empty, string.Empty, string.Empty, 0, 0, _OnMatchJoined);
         LogToConsole( "\n" + _GetRoomNumberFromNetworkId(match.networkId) + " " + match);
@@ -292,29 +286,27 @@ public class ArServerController : ServerNetworkManager
 
     void _OnMatchCreate(bool success, string extendedInfo, MatchInfo matchInfo)
     {
-       
         netManager.OnMatchCreate(success, extendedInfo, matchInfo);
 
         if (!success)
         {
-           LogErrorToConsole( "Could not create match: " + extendedInfo);
-           Start();
+            LogErrorToConsole( "Could not create match: " + extendedInfo);
+            Start();
             return;
         }
 
-       
+
 #pragma warning restore 618
 
         if (netManager.matches != null)
         {
-          //  var matchInfoSnapshot = netManager.matches.First(snapshot => snapshot.networkId == matchInfo.networkId);
-          //  LogToConsole( "Room " + _GetRoomNumberFromNetworkId(matchInfoSnapshot.networkId));
-          //netManager.matchName = matchInfo.address;
-         // netManager.matchMaker.JoinMatch(matchInfo.networkId, string.Empty, string.Empty, string.Empty, 0, matchInfo.domain, _OnMatchJoined);
-           LogErrorToConsole("NO ROOMS ANYWHERE");
+            //  var matchInfoSnapshot = netManager.matches.First(snapshot => snapshot.networkId == matchInfo.networkId);
+            //  LogToConsole( "Room " + _GetRoomNumberFromNetworkId(matchInfoSnapshot.networkId));
+            //netManager.matchName = matchInfo.address;
+            // netManager.matchMaker.JoinMatch(matchInfo.networkId, string.Empty, string.Empty, string.Empty, 0, matchInfo.domain, _OnMatchJoined);
+            LogErrorToConsole("NO ROOMS ANYWHERE");
         } else
         {
-            
         }
 
 
@@ -325,7 +317,7 @@ ToggleServerUI(false);
 
     void ToggleServerUI(bool visible)
     {
-     //   consoleMessages.gameObject.SetActive(visible);
+        //   consoleMessages.gameObject.SetActive(visible);
     }
 
     private string _GetRoomNumberFromNetworkId(NetworkID networkID)
@@ -337,11 +329,10 @@ ToggleServerUI(false);
     void OnDestroy()
     {
         // shutdown the server and disconnect all clients
-        if (netManager&&netManager.isNetworkActive)
+        if (netManager && netManager.isNetworkActive)
         {
             netManager.StopServer();
-            if(netDiscovery.hostId!=-1)
-            netDiscovery.StopBroadcast();
+            if (netDiscovery.hostId != -1) netDiscovery.StopBroadcast();
         }
 
         string sMessage = gameName + "-Server stopped.";
@@ -402,10 +393,146 @@ ToggleServerUI(false);
     }
 #endif
 
+#region Battle
+
+    void OnAttackRequest(NetworkMessage netMsg)
+    {
+        //TODO some checks for cheating
+        UpdateAttack(netMsg);
+    }
+
+    public IEnumerable<UnityEngine.Networking.PlayerController> playerListDynamic
+    {
+        get
+        {
+            var numPlayers = 0;
+
+            foreach (var conn in NetworkServer.connections)
+            {
+                if (conn == null) continue;
+
+                foreach (var t in conn.playerControllers.Where(t => t.IsValid))
+                {
+                    yield return t;
+                }
+            }
+        }
+    }
+
+    public UnityEngine.Networking.PlayerController[] NetPlayerList => playerListDynamic.ToArray();
+
+    public global::ClientPlayerController[] PlayerList => netToPlayerControllers.
+                                                    Where(n => playerListDynamic.Contains<UnityEngine.Networking.PlayerController>(n.Key)).Select(x => x.Value).
+                                                    ToArray();
+
+    Dictionary<PlayerController, ClientPlayerController> netToPlayerControllers;
+    IEnumerable<GameObject> gameObjects;
+    int ObjCount=>gameObjects.Count();
+    [SerializeField] int MaxObjectCount=300;
+    [SerializeField] float maxDenisty = .5f;
+
+    public global::ClientPlayerController[] GetPlayerList => NetPlayerList.
+                                                       Where(x => netToPlayerControllers != null && (x.IsValid && (  !(netToPlayerControllers[x] is null)))).
+                                                       Select(x => netToPlayerControllers[x]).ToArray();
+
+
+    public void UpdateAttack (NetworkMessage _packet)
+    {
+        // Loop through all the players
+       // var       NetPlayerList = this.GetPlayerList;
+        AttackMSG attack        = _packet.ReadMessage<AttackMSG>();
+
+        var networkInstanceId = new NetworkInstanceId(attack.netId);//TODO add dictinary init register clients controllers
+
+        if (netToPlayerControllers == null)
+        {
+            netToPlayerControllers = _packet.conn.playerControllers.ToDictionary(
+                x => x,controller => controller.gameObject.GetComponent<ClientPlayerController>());
+
+        }
+
+        var player = netToPlayerControllers[ _packet.conn.playerControllers.Find(x => x.unetView.netId == networkInstanceId)];
+       
+        switch (attack.attackType)
+        {
+            case        AttackMSG.AttackType.Blast:
+                player.Attack.DoBlast(attack.attackMode);
+                break;
+
+            case AttackMSG.AttackType.Bullet:
+                player.Attack.DoBullet(attack.attackMode);
+                break;
+            case AttackMSG.AttackType.Shield:
+                player.Attack.DoShield(attack.attackMode);
+                break;
+            default:
+                LogErrorToConsole("Can't response message'"+attack.attackMode+" , "+attack.attackType);
+                break;
+        }
+
+        NetworkServer.SendToClient(_packet.conn.connectionId, NetMsgType.AttackResponse , new ReadyMessage());
+    }
+
+#endregion
+
+#region Buildings
+
+    private void OnSpawnObject(NetworkMessage netMsg)
+    {
+        var request = netMsg.ReadMessage<SetGameObjectRequestMsg>();
+
+        if (request == null || request.gameName != gameName) return;
+
+        bool requestGranted = !string.IsNullOrEmpty(gameCloudAnchorId);
+        SetGameObjectResponseMsg response     ;
+        bool denistyisOk=false   ;
+        if (requestGranted&& ObjCount < MaxObjectCount)
+        {
+            gameObjects = gameObjects.OrderBy((obj =>
+                                               {
+                                                   var distance = Vector3.Distance(request.anchorPos, obj.transform.position);
+                                                   return distance > obj.transform.lossyScale.sqrMagnitude ? distance : 2 * distance;
+                                               }));
+
+            denistyisOk = gameObjects.Take((int) Math.Ceiling(1 + ObjCount * .3f)).Average(x => x.transform.lossyScale.magnitude) < maxDenisty;
+        }
+
+        response = new SetGameObjectResponseMsg {confirmed = requestGranted&&denistyisOk};
+
+       
+
+        if (response.confirmed)
+        {
+
+            var spawnPrefab = manager.spawnPrefabs[Math.Abs((int) (uint) request.model % (manager.spawnPrefabs.Count - 1))];
+            if (anchorStatusText)
+            {
+                anchorStatusText.text = "Shared world anchor: " + gameCloudAnchorId;
+            }
+
+            var go =Instantiate(spawnPrefab);
+
+            go.transform.SetParent(gameAnchorTransform);
+            go.transform.localPosition =request.anchorPos;
+            go.transform.localRotation = request.anchorRot;
+            NetworkServer.SpawnWithClientAuthority(spawnPrefab , netMsg.conn);
+        }
+
+        NetworkServer.SendToClient(netMsg.conn.connectionId, NetMsgType.SetGameObjectResponse , response);
+        
+        int connId = netMsg.conn.connectionId;
+        LogDebugToConsole($"Get request to build {request.model.ToString()} received from client " + connId + "");
+
+        if (!string.IsNullOrEmpty(gameCloudAnchorId))
+        {
+            LogToConsole("  Got anchor by client " + connId);
+        }
+    }
+
+#endregion
 #region ResolveAnchors
 
-    // handles GetGameAnchorRequestMsg
-    private void OnGetGameAnchorRequest(NetworkMessage netMsg)
+    void OnGetGameAnchorRequest(NetworkMessage netMsg)
     {
         var request = netMsg.ReadMessage<GetGameAnchorRequestMsg>();
         if (request == null || request.gameName != gameName) return;
@@ -414,7 +541,6 @@ ToggleServerUI(false);
         {
             found    = !string.IsNullOrEmpty(gameCloudAnchorId),
             anchorId = gameCloudAnchorId,
-            //apiKey = cloudApiKey,
             anchorData = gameAnchorData
         };
 
@@ -428,6 +554,7 @@ ToggleServerUI(false);
             LogToConsole("  Got anchor by client " + connId);
         }
     }
+    
 
 
     // handles CheckHostAnchorRequest
@@ -469,7 +596,7 @@ ToggleServerUI(false);
 
 
     // handles SetGameAnchorRequest
-     void OnSetGameAnchorRequest(NetworkMessage netMsg)
+    void OnSetGameAnchorRequest(NetworkMessage netMsg)
     {
         var request = netMsg.ReadMessage<SetGameAnchorRequestMsg>();
         if (request == null || request.gameName != gameName) return;
@@ -515,6 +642,7 @@ ToggleServerUI(false);
     }
 
 #endregion
+
 
 #region Logging
 
@@ -579,3 +707,4 @@ ToggleServerUI(false);
 
 #endregion
 }
+

@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData">
+  <component name="PublishConfigData" uploadOnCheckin="930f39ae-4784-4bf1-8e1b-9a912e295681">
     <serverData>
       <paths name="HomeSweet">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="" local="$PROJECT_DIR$" web="" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="MyHomeServer">
+        <serverdata>
+          <mappings>
+            <mapping deploy="\" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
     </serverData>
+    <option name="myUploadOnCheckinName" value="MyHomeServer" />
   </component>
 </project>

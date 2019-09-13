@@ -73,11 +73,7 @@ ARexamples.sln
 ARexamples.sln.DotSettings.user
 Assembly-CSharp-Editor.csproj
 Assembly-CSharp.csproj
-Assets/Game/Game/Scripts/
-Assets/MultiAR/DemoScenes/NetworkDemo/Scripts/MyFiles/
-Assets/Resources/
-Assets/Scenes/Server.unity
-Assets/Scenes/Server.unity.meta
+
 DUMblemagick.apk
 DUMblemagick2.apk
 Library/
@@ -118,3 +114,7 @@ obj/
 prototype1.apk
 prototype2.apk
 reallobb3u.apk
+Assets2.zip
+
+!/Assets/MultiAR/DemoScenes/NetworkDemo/Scripts/MyFiles/LaunchProjectile.cs
+!/Assets/MultiAR/DemoScenes/NetworkDemo/Scripts/Network/

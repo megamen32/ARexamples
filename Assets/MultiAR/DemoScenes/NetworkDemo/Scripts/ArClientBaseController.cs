@@ -51,7 +51,7 @@ public class ArClientBaseController : ClientNetworkManager
 	protected ServerNetworkManager netManager = null;
 
 	// reference to the network client & discovery
-	protected NetworkClient netClient = null;
+	protected internal NetworkClient netClient = null;
 	protected ClientNetworkDiscovery netDiscovery = null;
 
 	// reference to the multi-ar manager
@@ -442,10 +442,9 @@ public class ArClientBaseController : ClientNetworkManager
 	{
 		Debug.Log(sMessage);
 
-		if(statusText && showDebugMessages)
-		{
-			statusText.text = sMessage;
-		}
-	}
-
+        if (statusText && showDebugMessages)
+        {
+            statusText.text = sMessage;
+        }
+    }
 }
